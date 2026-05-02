@@ -23,6 +23,8 @@ export async function POST(_req: Request, ctx: { params: Promise<{ id: string }>
     contentHtml: seedNotes,
     status: "draft",
     tags: idea.tags,
+    icon: idea.icon,
+    links: idea.links,
     sourceIdea: idea.id,
     createdAt: now,
     updatedAt: now,

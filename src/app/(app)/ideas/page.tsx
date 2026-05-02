@@ -36,6 +36,8 @@ export default async function IdeasPage({ searchParams }: Props) {
             tags={i.tags}
             meta={formatDate(i.updatedAt)}
             subtitle={i.promotedTo ? "Promoted" : undefined}
+            icon={i.icon}
+            deletable={{ kind: "idea", id: i.id }}
           />
         ))}
       </div>

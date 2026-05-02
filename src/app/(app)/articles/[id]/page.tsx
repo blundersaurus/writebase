@@ -15,6 +15,8 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
         contentHtml: article.contentHtml,
         status: article.status,
         tags: article.tags,
+        icon: article.icon,
+        links: article.links,
         updatedAt: article.updatedAt,
         sourceIdea: article.sourceIdea,
       }}

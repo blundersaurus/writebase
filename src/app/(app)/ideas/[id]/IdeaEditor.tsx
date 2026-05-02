@@ -4,12 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import TagInput from "@/components/TagInput";
+import IconInput from "@/components/IconInput";
+import LinksEditor from "@/components/LinksEditor";
+import type { RefLink } from "@/db/schema";
 
 type Idea = {
   id: string;
   title: string;
   notes: string;
   tags: string[];
+  icon: string | null;
+  links: RefLink[];
   promotedTo: string | null;
   updatedAt: number;
 };
@@ -19,6 +24,8 @@ export default function IdeaEditor({ idea }: { idea: Idea }) {
   const [title, setTitle] = useState(idea.title);
   const [notes, setNotes] = useState(idea.notes);
   const [tags, setTags] = useState<string[]>(idea.tags);
+  const [icon, setIcon] = useState<string | null>(idea.icon);
+  const [links, setLinks] = useState<RefLink[]>(idea.links);
   const [savedAt, setSavedAt] = useState<number>(idea.updatedAt);
   const [saving, setSaving] = useState(false);
   const initial = useRef(true);
@@ -35,7 +42,7 @@ export default function IdeaEditor({ idea }: { idea: Idea }) {
       const res = await fetch(`/api/ideas/${idea.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, notes, tags }),
+        body: JSON.stringify({ title, notes, tags, icon, links }),
       });
       if (res.ok) {
         const updated = await res.json();
@@ -46,7 +53,7 @@ export default function IdeaEditor({ idea }: { idea: Idea }) {
     return () => {
       if (debounce.current) clearTimeout(debounce.current);
     };
-  }, [title, notes, tags, idea.id]);
+  }, [title, notes, tags, icon, links, idea.id]);
 
   async function promote() {
     const res = await fetch(`/api/ideas/${idea.id}/promote`, { method: "POST" });
@@ -73,13 +80,16 @@ export default function IdeaEditor({ idea }: { idea: Idea }) {
         </span>
       </div>
 
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Idea title"
-        className="w-full text-2xl font-semibold bg-transparent outline-none border-b border-transparent focus:border-neutral-300 py-2"
-      />
+      <div className="flex items-center gap-3">
+        <IconInput value={icon} onChange={setIcon} />
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Idea title"
+          className="flex-1 text-2xl font-semibold bg-transparent outline-none border-b border-transparent focus:border-neutral-300 py-2"
+        />
+      </div>
 
       <TagInput value={tags} onChange={setTags} />
 
@@ -89,6 +99,8 @@ export default function IdeaEditor({ idea }: { idea: Idea }) {
         placeholder="Notes, angles, sources..."
         className="w-full min-h-[16rem] bg-white border border-neutral-200 rounded-md p-4 text-sm font-mono outline-none focus:border-neutral-400"
       />
+
+      <LinksEditor value={links} onChange={setLinks} />
 
       <div className="flex items-center gap-2 pt-2">
         {idea.promotedTo ? (

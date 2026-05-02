@@ -14,6 +14,8 @@ export default async function IdeaDetailPage({ params }: { params: Promise<{ id:
         title: idea.title,
         notes: idea.notes,
         tags: idea.tags,
+        icon: idea.icon,
+        links: idea.links,
         promotedTo: idea.promotedTo,
         updatedAt: idea.updatedAt,
       }}

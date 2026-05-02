@@ -25,6 +25,11 @@ const DDL = `
   CREATE INDEX IF NOT EXISTS ideas_updated_at_idx    ON ideas(updated_at DESC);
   CREATE INDEX IF NOT EXISTS articles_updated_at_idx ON articles(updated_at DESC);
   CREATE INDEX IF NOT EXISTS articles_status_idx     ON articles(status);
+
+  ALTER TABLE ideas    ADD COLUMN IF NOT EXISTS icon  text;
+  ALTER TABLE articles ADD COLUMN IF NOT EXISTS icon  text;
+  ALTER TABLE ideas    ADD COLUMN IF NOT EXISTS links jsonb NOT NULL DEFAULT '[]'::jsonb;
+  ALTER TABLE articles ADD COLUMN IF NOT EXISTS links jsonb NOT NULL DEFAULT '[]'::jsonb;
 `;
 
 export async function runMigrations(client: ReturnType<typeof postgres>) {

@@ -5,6 +5,9 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import TagInput from "@/components/TagInput";
+import IconInput from "@/components/IconInput";
+import LinksEditor from "@/components/LinksEditor";
+import type { RefLink } from "@/db/schema";
 
 const Editor = dynamic(() => import("@/components/Editor"), { ssr: false });
 
@@ -14,6 +17,8 @@ type Article = {
   contentHtml: string;
   status: "draft" | "completed";
   tags: string[];
+  icon: string | null;
+  links: RefLink[];
   updatedAt: number;
   sourceIdea: string | null;
 };
@@ -24,6 +29,8 @@ export default function ArticleEditor({ article }: { article: Article }) {
   const [contentHtml, setContentHtml] = useState(article.contentHtml);
   const [status, setStatus] = useState<"draft" | "completed">(article.status);
   const [tags, setTags] = useState<string[]>(article.tags);
+  const [icon, setIcon] = useState<string | null>(article.icon);
+  const [links, setLinks] = useState<RefLink[]>(article.links);
   const [savedAt, setSavedAt] = useState<number>(article.updatedAt);
   const [saving, setSaving] = useState(false);
   const initial = useRef(true);
@@ -40,7 +47,7 @@ export default function ArticleEditor({ article }: { article: Article }) {
       const res = await fetch(`/api/articles/${article.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, contentHtml, status, tags }),
+        body: JSON.stringify({ title, contentHtml, status, tags, icon, links }),
       });
       if (res.ok) {
         const updated = await res.json();
@@ -51,7 +58,7 @@ export default function ArticleEditor({ article }: { article: Article }) {
     return () => {
       if (debounce.current) clearTimeout(debounce.current);
     };
-  }, [title, contentHtml, status, tags, article.id]);
+  }, [title, contentHtml, status, tags, icon, links, article.id]);
 
   async function remove() {
     if (!window.confirm("Delete this article? This cannot be undone.")) return;
@@ -80,13 +87,16 @@ export default function ArticleEditor({ article }: { article: Article }) {
         </div>
       )}
 
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Article title"
-        className="w-full text-3xl font-semibold bg-transparent outline-none border-b border-transparent focus:border-neutral-300 py-2"
-      />
+      <div className="flex items-center gap-3">
+        <IconInput value={icon} onChange={setIcon} />
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Article title"
+          className="flex-1 text-3xl font-semibold bg-transparent outline-none border-b border-transparent focus:border-neutral-300 py-2"
+        />
+      </div>
 
       <div className="flex flex-wrap items-center gap-3">
         <select
@@ -103,6 +113,8 @@ export default function ArticleEditor({ article }: { article: Article }) {
       </div>
 
       <Editor value={contentHtml} onChange={setContentHtml} />
+
+      <LinksEditor value={links} onChange={setLinks} />
 
       <div className="flex items-center gap-2 pt-2">
         <a

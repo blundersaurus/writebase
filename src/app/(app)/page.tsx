@@ -40,6 +40,8 @@ export default async function DashboardPage() {
                 preview={i.notes}
                 tags={i.tags}
                 meta={formatDate(i.updatedAt)}
+                icon={i.icon}
+                deletable={{ kind: "idea", id: i.id }}
               />
             ))}
           </div>
@@ -65,6 +67,8 @@ export default async function DashboardPage() {
                 preview={htmlToPlainText(a.contentHtml).slice(0, 160)}
                 tags={a.tags}
                 meta={formatDate(a.updatedAt)}
+                icon={a.icon}
+                deletable={{ kind: "article", id: a.id }}
               />
             ))}
           </div>

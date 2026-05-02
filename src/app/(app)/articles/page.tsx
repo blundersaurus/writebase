@@ -48,6 +48,8 @@ export default async function ArticlesPage({ searchParams }: Props) {
             preview={htmlToPlainText(a.contentHtml).slice(0, 200)}
             tags={a.tags}
             meta={formatDate(a.updatedAt)}
+            icon={a.icon}
+            deletable={{ kind: "article", id: a.id }}
           />
         ))}
       </div>

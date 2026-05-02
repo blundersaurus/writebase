@@ -1,8 +1,15 @@
+export type RefLink = {
+  url: string;
+  title: string;
+};
+
 export type Idea = {
   id: string;
   title: string;
   notes: string;
   tags: string[];
+  icon: string | null;
+  links: RefLink[];
   createdAt: number;
   updatedAt: number;
   promotedTo: string | null;
@@ -14,6 +21,8 @@ export type Article = {
   contentHtml: string;
   status: "draft" | "completed";
   tags: string[];
+  icon: string | null;
+  links: RefLink[];
   sourceIdea: string | null;
   createdAt: number;
   updatedAt: number;
