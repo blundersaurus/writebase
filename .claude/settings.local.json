@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(npm install *)",
+      "Bash(node -e \"console.log\\(require\\('crypto'\\).randomBytes\\(32\\).toString\\('hex'\\)\\)\")",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"GET / => %{http_code} -> %{redirect_url}\\\\n\" http://localhost:3000/)",
+      "Bash(curl -s -o /dev/null -w \"GET /login => %{http_code}\\\\n\" http://localhost:3000/login)",
+      "Bash(curl -s -X POST -H \"Content-Type: application/json\" -d '{\"password\":\"change-me\"}' -c /tmp/cookies.txt http://localhost:3000/api/login -w \"\\\\nPOST /api/login => %{http_code}\\\\n\")",
+      "Bash(curl -s -b /tmp/cookies.txt http://localhost:3000/api/ideas -w \"\\\\nGET /api/ideas => %{http_code}\\\\n\")",
+      "Bash(curl -s -b /tmp/cookies.txt -X POST -H \"Content-Type: application/json\" -d '{\"title\":\"Test idea\",\"notes\":\"Some notes\",\"tags\":[\"sample\"]}' http://localhost:3000/api/ideas)",
+      "Bash(curl -s -b /tmp/cookies.txt http://localhost:3000/api/ideas)",
+      "Bash(curl -s -b /tmp/cookies.txt \"http://localhost:3000/api/search?q=sample\")",
+      "Bash(curl -s -b /tmp/cookies.txt -X POST http://localhost:3000/api/ideas/d83jzVZqsj8yJrAl/promote)",
+      "Bash(curl -s -b /tmp/cookies.txt http://localhost:3000/api/articles)",
+      "Bash(rm -f /tmp/cookies.txt)",
+      "Bash(time curl *)",
+      "Bash(curl -s -X POST -H \"Content-Type: application/json\" -d '{\"password\":\"change-me\"}' -c /tmp/cookies.txt http://localhost:3000/api/login)",
+      "Bash(curl -s -b /tmp/cookies.txt -X POST -H \"Content-Type: application/json\" -d '{\"title\":\"\",\"notes\":\"\",\"tags\":[]}' http://localhost:3000/api/ideas -w \"\\\\nstatus: %{http_code}\\\\n\")",
+      "Bash(taskkill //PID 4244 //F)",
+      "Bash(netstat -ano)",
+      "Bash(curl -s -X POST -H \"Content-Type: application/json\" -d '{\"password\":\"change-me\"}' -c /tmp/cookies.txt http://localhost:3001/api/login)",
+      "Bash(curl -s -b /tmp/cookies.txt -X POST -H \"Content-Type: application/json\" -d '{\"title\":\"\",\"notes\":\"\",\"tags\":[]}' http://localhost:3001/api/ideas -w \"\\\\nstatus: %{http_code}\\\\n\")",
+      "mcp__Claude_in_Chrome__browser_batch",
+      "Bash(taskkill //PID 7868 //F //T)",
+      "Bash(curl -s -b /tmp/cookies.txt -X POST -H \"Content-Type: application/json\" -d '{\"title\":\"WriteBase test\",\"notes\":\"From Supabase\",\"tags\":[\"alpha\",\"beta\"]}' http://localhost:3000/api/ideas)",
+      "Bash(curl -s -b /tmp/cookies.txt \"http://localhost:3000/api/search?q=alpha\")",
+      "mcp__Claude_in_Chrome__tabs_context_mcp"
+    ]
+  }
+}
