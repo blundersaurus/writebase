@@ -107,9 +107,7 @@ export default function ArticleEditor({ article }: { article: Article }) {
           <option value="draft">Draft</option>
           <option value="completed">Completed</option>
         </select>
-        <div className="flex-1 min-w-[16rem]">
-          <TagInput value={tags} onChange={setTags} />
-        </div>
+        <TagInput value={tags} onChange={setTags} />
       </div>
 
       <Editor value={contentHtml} onChange={setContentHtml} />

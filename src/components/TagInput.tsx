@@ -23,7 +23,7 @@ export default function TagInput({ value, onChange, placeholder }: Props) {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-1 border border-neutral-300 rounded px-2 py-1 bg-white">
+    <div className="inline-flex flex-wrap items-center gap-1 border border-neutral-300 rounded px-2 py-1 bg-white max-w-full">
       {value.map((tag) => (
         <span
           key={tag}
@@ -60,7 +60,8 @@ export default function TagInput({ value, onChange, placeholder }: Props) {
           }
         }}
         placeholder={value.length === 0 ? placeholder ?? "Add tag..." : ""}
-        className="flex-1 min-w-[6rem] outline-none text-sm py-1"
+        size={Math.max(8, draft.length + 2)}
+        className="outline-none text-sm py-0.5 bg-transparent"
       />
     </div>
   );

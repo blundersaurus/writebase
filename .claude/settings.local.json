@@ -27,7 +27,9 @@
       "Bash(curl -s -b /tmp/cookies.txt -X POST -H \"Content-Type: application/json\" -d '{\"title\":\"WriteBase test\",\"notes\":\"From Supabase\",\"tags\":[\"alpha\",\"beta\"]}' http://localhost:3000/api/ideas)",
       "Bash(curl -s -b /tmp/cookies.txt \"http://localhost:3000/api/search?q=alpha\")",
       "mcp__Claude_in_Chrome__tabs_context_mcp",
-      "Bash(curl -s -i -X POST -H \"Content-Type: application/json\" -d '{\"password\":\"change-me\"}' http://localhost:3000/api/login)"
+      "Bash(curl -s -i -X POST -H \"Content-Type: application/json\" -d '{\"password\":\"change-me\"}' http://localhost:3000/api/login)",
+      "Bash(taskkill //PID 9020 //F //T)",
+      "Bash(taskkill //PID 30980 //F //T)"
     ]
   }
 }
