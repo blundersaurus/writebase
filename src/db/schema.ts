@@ -27,3 +27,27 @@ export type Article = {
   createdAt: number;
   updatedAt: number;
 };
+
+export type StoryIdea = {
+  id: string;
+  title: string;
+  notes: string;
+  tags: string[];
+  icon: string | null;
+  links: RefLink[];
+  createdAt: number;
+  updatedAt: number;
+  promotedTo: string | null;
+};
+
+export type StoryDraft = {
+  id: string;
+  title: string;
+  notes: string;
+  tags: string[];
+  icon: string | null;
+  links: RefLink[];
+  sourceIdea: string | null;
+  createdAt: number;
+  updatedAt: number;
+};

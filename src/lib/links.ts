@@ -8,7 +8,7 @@ export function cleanLinks(input: unknown): RefLink[] {
       const obj = l as { url?: unknown; title?: unknown };
       const url = typeof obj.url === "string" ? obj.url.trim() : "";
       const title = typeof obj.title === "string" ? obj.title.trim() : "";
-      if (!url) return null;
+      if (!url && !title) return null;
       return { url, title };
     })
     .filter((l): l is RefLink => l !== null);

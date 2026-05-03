@@ -6,9 +6,10 @@ import type { RefLink } from "@/db/schema";
 type Props = {
   value: RefLink[];
   onChange: (links: RefLink[]) => void;
+  heading?: string;
 };
 
-export default function LinksEditor({ value, onChange }: Props) {
+export default function LinksEditor({ value, onChange, heading = "Reference links" }: Props) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [draftUrl, setDraftUrl] = useState("");
@@ -53,22 +54,32 @@ export default function LinksEditor({ value, onChange }: Props) {
     e.preventDefault();
     const raw = draftUrl.trim();
     const title = draftTitle.trim();
-    if (!raw) {
+
+    // Require URL only when adding a new link, not when editing a placeholder
+    const isPlaceholderEdit = editingIndex !== null && !value[editingIndex]?.url;
+    if (!raw && !isPlaceholderEdit) {
       setError("URL is required.");
       return;
     }
-    const finalUrl = /^[a-z][a-z0-9+.-]*:/i.test(raw) ? raw : `https://${raw}`;
-    try {
-      new URL(finalUrl);
-    } catch {
-      setError("That doesn't look like a valid URL.");
-      return;
+    if (raw) {
+      const finalUrl = /^[a-z][a-z0-9+.-]*:/i.test(raw) ? raw : `https://${raw}`;
+      try {
+        new URL(finalUrl);
+      } catch {
+        setError("That doesn't look like a valid URL.");
+        return;
+      }
+      const link: RefLink = { url: finalUrl, title };
+      const next = [...value];
+      if (editingIndex === null) next.push(link);
+      else next[editingIndex] = link;
+      onChange(next);
+    } else {
+      // Saving a placeholder with no URL — keep it as-is but update title
+      const next = [...value];
+      next[editingIndex!] = { url: "", title };
+      onChange(next);
     }
-    const link: RefLink = { url: finalUrl, title };
-    const next = [...value];
-    if (editingIndex === null) next.push(link);
-    else next[editingIndex] = link;
-    onChange(next);
     close();
   }
 
@@ -79,7 +90,7 @@ export default function LinksEditor({ value, onChange }: Props) {
   return (
     <section className="border border-neutral-200 rounded-md bg-white">
       <header className="px-4 py-2 border-b border-neutral-200 flex items-center justify-between">
-        <h3 className="text-sm font-medium">Reference links</h3>
+        <h3 className="text-sm font-medium">{heading}</h3>
         <button
           type="button"
           onClick={openAdd}
@@ -96,37 +107,47 @@ export default function LinksEditor({ value, onChange }: Props) {
             page, or any URL.
           </li>
         )}
-        {value.map((link, idx) => (
-          <li key={idx} className="flex items-center gap-2 text-sm group">
-            <a
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 hover:underline truncate"
-              title={link.url}
-            >
-              {link.title || link.url}
-            </a>
-            <button
-              type="button"
-              onClick={() => openEdit(idx)}
-              className="text-xs text-neutral-400 hover:text-neutral-700 opacity-0 group-hover:opacity-100"
-              aria-label="Edit link"
-              title="Edit"
-            >
-              edit
-            </button>
-            <button
-              type="button"
-              onClick={() => remove(idx)}
-              className="text-xs text-neutral-400 hover:text-red-600 opacity-0 group-hover:opacity-100 ml-auto"
-              aria-label="Remove link"
-              title="Remove"
-            >
-              ×
-            </button>
-          </li>
-        ))}
+        {value.map((link, idx) => {
+          const isPlaceholder = !link.url;
+          return (
+            <li key={idx} className={`flex items-center gap-2 text-sm ${isPlaceholder ? "" : "group"}`}>
+              {isPlaceholder ? (
+                <span className="text-neutral-400 italic truncate">
+                  {link.title || "Untitled"}
+                  <span className="text-xs not-italic ml-1">— add link</span>
+                </span>
+              ) : (
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline truncate"
+                  title={link.url}
+                >
+                  {link.title || link.url}
+                </a>
+              )}
+              <button
+                type="button"
+                onClick={() => openEdit(idx)}
+                className={`text-xs text-neutral-400 hover:text-neutral-700 shrink-0 ${isPlaceholder ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+                aria-label="Edit link"
+                title="Edit"
+              >
+                edit
+              </button>
+              <button
+                type="button"
+                onClick={() => remove(idx)}
+                className={`text-xs text-neutral-400 hover:text-red-600 shrink-0 ml-auto ${isPlaceholder ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+                aria-label="Remove link"
+                title="Remove"
+              >
+                ×
+              </button>
+            </li>
+          );
+        })}
       </ul>
 
       <dialog
@@ -149,7 +170,6 @@ export default function LinksEditor({ value, onChange }: Props) {
               onChange={(e) => setDraftUrl(e.target.value)}
               placeholder="https://docs.google.com/..."
               className="w-full border border-neutral-300 rounded px-2 py-1.5 text-sm outline-none focus:border-neutral-500"
-              required
             />
           </div>
           <div>

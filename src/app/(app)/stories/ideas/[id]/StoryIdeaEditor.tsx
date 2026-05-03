@@ -8,7 +8,7 @@ import IconInput from "@/components/IconInput";
 import LinksEditor from "@/components/LinksEditor";
 import type { RefLink } from "@/db/schema";
 
-type Idea = {
+type StoryIdea = {
   id: string;
   title: string;
   notes: string;
@@ -19,7 +19,7 @@ type Idea = {
   updatedAt: number;
 };
 
-export default function IdeaEditor({ idea }: { idea: Idea }) {
+export default function StoryIdeaEditor({ idea }: { idea: StoryIdea }) {
   const router = useRouter();
   const [title, setTitle] = useState(idea.title);
   const [notes, setNotes] = useState(idea.notes);
@@ -39,7 +39,7 @@ export default function IdeaEditor({ idea }: { idea: Idea }) {
     if (debounce.current) clearTimeout(debounce.current);
     debounce.current = setTimeout(async () => {
       setSaving(true);
-      const res = await fetch(`/api/ideas/${idea.id}`, {
+      const res = await fetch(`/api/story-ideas/${idea.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, notes, tags, icon, links }),
@@ -56,36 +56,43 @@ export default function IdeaEditor({ idea }: { idea: Idea }) {
   }, [title, notes, tags, icon, links, idea.id]);
 
   async function promote() {
+    // Flush any pending debounce before promoting so the title/notes are up to date
     if (debounce.current) {
       clearTimeout(debounce.current);
       debounce.current = null;
-      await fetch(`/api/ideas/${idea.id}`, {
+      await fetch(`/api/story-ideas/${idea.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title, notes, tags, icon, links }),
       });
     }
-    const res = await fetch(`/api/ideas/${idea.id}/promote`, { method: "POST" });
+    const res = await fetch(`/api/story-ideas/${idea.id}/promote`, { method: "POST" });
     if (res.ok) {
       const data = await res.json();
-      router.push(`/articles/${data.id}`);
+      router.push(`/stories/drafts/${data.id}`);
     }
   }
 
   async function remove() {
-    if (!window.confirm("Delete this idea? This cannot be undone.")) return;
-    const res = await fetch(`/api/ideas/${idea.id}`, { method: "DELETE" });
-    if (res.ok) router.push("/ideas");
+    if (!window.confirm("Delete this story idea? This cannot be undone.")) return;
+    const res = await fetch(`/api/story-ideas/${idea.id}`, { method: "DELETE" });
+    if (res.ok) router.push("/stories/ideas");
   }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-4">
-        <Link href="/ideas" className="text-sm text-neutral-600 hover:text-neutral-900">
-          ← Back to ideas
+        <Link href="/stories/ideas" className="text-sm text-indigo-600 hover:text-indigo-800">
+          ← Back to story ideas
         </Link>
         <span className="text-xs text-neutral-500">
           {saving ? "Saving..." : `Saved ${new Date(savedAt).toLocaleTimeString()}`}
+        </span>
+      </div>
+
+      <div className="pb-2 border-b border-indigo-100">
+        <span className="text-xs font-semibold uppercase tracking-wider text-indigo-500">
+          Story Idea
         </span>
       </div>
 
@@ -95,8 +102,8 @@ export default function IdeaEditor({ idea }: { idea: Idea }) {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Idea title"
-          className="flex-1 text-2xl font-semibold bg-transparent outline-none border-b border-transparent focus:border-neutral-300 py-2"
+          placeholder="Story idea title"
+          className="flex-1 text-2xl font-semibold bg-transparent outline-none border-b border-transparent focus:border-indigo-300 py-2"
         />
       </div>
 
@@ -105,8 +112,8 @@ export default function IdeaEditor({ idea }: { idea: Idea }) {
       <textarea
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
-        placeholder="Notes, angles, sources..."
-        className="w-full min-h-[16rem] bg-white border border-neutral-200 rounded-md p-4 text-sm font-mono outline-none focus:border-neutral-400"
+        placeholder="Notes, angles, research, synopsis..."
+        className="w-full min-h-[16rem] bg-white border border-neutral-200 rounded-md p-4 text-sm font-mono outline-none focus:border-indigo-300"
       />
 
       <LinksEditor value={links} onChange={setLinks} />
@@ -114,15 +121,15 @@ export default function IdeaEditor({ idea }: { idea: Idea }) {
       <div className="flex items-center gap-2 pt-2">
         {idea.promotedTo ? (
           <Link
-            href={`/articles/${idea.promotedTo}`}
-            className="bg-neutral-900 text-white text-sm rounded px-3 py-1.5"
+            href={`/stories/drafts/${idea.promotedTo}`}
+            className="bg-indigo-700 text-white text-sm rounded px-3 py-1.5 hover:bg-indigo-800"
           >
             Open draft →
           </Link>
         ) : (
           <button
             onClick={promote}
-            className="bg-neutral-900 text-white text-sm rounded px-3 py-1.5"
+            className="bg-indigo-700 text-white text-sm rounded px-3 py-1.5 hover:bg-indigo-800"
           >
             Promote to draft
           </button>

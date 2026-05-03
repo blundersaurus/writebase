@@ -30,6 +30,33 @@ const DDL = `
   ALTER TABLE articles ADD COLUMN IF NOT EXISTS icon  text;
   ALTER TABLE ideas    ADD COLUMN IF NOT EXISTS links jsonb NOT NULL DEFAULT '[]'::jsonb;
   ALTER TABLE articles ADD COLUMN IF NOT EXISTS links jsonb NOT NULL DEFAULT '[]'::jsonb;
+
+  CREATE TABLE IF NOT EXISTS story_ideas (
+    id           text PRIMARY KEY,
+    title        text NOT NULL DEFAULT '',
+    notes        text NOT NULL DEFAULT '',
+    tags         text[] NOT NULL DEFAULT '{}',
+    icon         text,
+    links        jsonb NOT NULL DEFAULT '[]'::jsonb,
+    created_at   bigint NOT NULL,
+    updated_at   bigint NOT NULL,
+    promoted_to  text
+  );
+
+  CREATE TABLE IF NOT EXISTS story_drafts (
+    id           text PRIMARY KEY,
+    title        text NOT NULL DEFAULT '',
+    notes        text NOT NULL DEFAULT '',
+    tags         text[] NOT NULL DEFAULT '{}',
+    icon         text,
+    links        jsonb NOT NULL DEFAULT '[]'::jsonb,
+    source_idea  text,
+    created_at   bigint NOT NULL,
+    updated_at   bigint NOT NULL
+  );
+
+  CREATE INDEX IF NOT EXISTS story_ideas_updated_at_idx  ON story_ideas(updated_at DESC);
+  CREATE INDEX IF NOT EXISTS story_drafts_updated_at_idx ON story_drafts(updated_at DESC);
 `;
 
 export async function runMigrations(client: ReturnType<typeof postgres>) {

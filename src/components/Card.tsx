@@ -9,7 +9,7 @@ type Props = {
   tags?: string[];
   meta?: string;
   icon?: string | null;
-  deletable?: { kind: "idea" | "article"; id: string };
+  deletable?: { kind: "idea" | "article" | "story-idea" | "story-draft"; id: string };
 };
 
 export default function Card({

@@ -4,9 +4,16 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type Props = {
-  kind: "idea" | "article";
+  kind: "idea" | "article" | "story-idea" | "story-draft";
   id: string;
   title: string;
+};
+
+const API_PATH: Record<Props["kind"], string> = {
+  idea: "/api/ideas",
+  article: "/api/articles",
+  "story-idea": "/api/story-ideas",
+  "story-draft": "/api/story-drafts",
 };
 
 export default function CardDeleteButton({ kind, id, title }: Props) {
@@ -20,8 +27,7 @@ export default function CardDeleteButton({ kind, id, title }: Props) {
     if (!window.confirm(`Delete "${label}"? This cannot be undone.`)) return;
     setBusy(true);
     try {
-      const url = kind === "idea" ? `/api/ideas/${id}` : `/api/articles/${id}`;
-      const res = await fetch(url, { method: "DELETE" });
+      const res = await fetch(`${API_PATH[kind]}/${id}`, { method: "DELETE" });
       if (!res.ok) {
         alert(`Delete failed: ${res.status}`);
         return;
